@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dojo Secrets</title>
+</head>
+<body>
+    <h1>Hello, {{user.first_name}} !</h1>
+    <a href="/logout"> Log Out </a>
+
+    <form action="/post" method='post'>
+        {% csrf_token %}
+        <textarea name="content" placeholder="Type your secret here..." cols="30" rows="10"></textarea>
+        <br>
+        <input type="submit" value='Post'>
+    </form>
+
+    <h2>Secrets</h2>
+
+    {% for secret in secrets %}
+        <p>{{secret.content}}</p>
+        <p>(Posted {{secret.created_at|timesince}}  ago)   {{secret.likes.count}} likes </p>
+
+        {% if secret.creator == user %}
+        <!--NOTE: user is what you passed in the context dictionary: if the creator of this secret is equal to user's id, display delete button -->
+            <form action="/delete/{{secret.id}}" method='post'>
+            {% csrf_token %}
+                <input type="submit" value="Delete">
+            </form>
+        {% endif %}
+        {% if not secret.liked %}
+            {% if secret.creator != user %}
+            <form action="/like/{{secret.id}}" method='post'>
+            {% csrf_token %}
+                <input type="submit" value="Like">
+            </form>
+            {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{message}}</p>
+            {% endfor %}
+        {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    <a href="/popular">Most Popular Secrets</a>
+
+
+
+</body>
+</html>

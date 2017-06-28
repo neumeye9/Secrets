@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Dojo Secrets</title>
+</head>
+<body>
+    <h1>Most Popular Secrets</h1>
+
+{% for secret in secrets %}
+        <p>{{secret.content}}</p>
+        <p>(Posted {{secret.created_at|timesince}}  ago)   {{secret.likes.count}} likes </p>
+
+        {% if secret.creator == user %}
+        <!--NOTE: user is what you passed in the context dictionary: if this creator of this secret is equal to user's id, display delete button -->
+            <form action="/deletepop/{{secret.id}}" method='post'>
+            {% csrf_token %}
+                <input type="submit" value="Delete">
+            </form>
+        {% elif not secret.liked %}
+            <form action="/likepop/{{secret.id}}" method='post'>
+            {% csrf_token %}
+                <input type="submit" value="Like">
+            </form>
+        {% endif %}
+    {% endfor %}
+
+    <a href="/back">Back</a>
+</body>
+</html>
